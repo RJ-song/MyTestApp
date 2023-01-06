@@ -66,6 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _counter++;
     });
     // Test Comment
+    // Test Comment2
   }
 
   @override
