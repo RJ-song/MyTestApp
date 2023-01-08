@@ -1,36 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:mytestapp/views/login_view.dart';
-import 'firebase_options.dart';
+import 'package:mytestapp/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options:DefaultFirebaseOptions.currentPlatform
-  );
-  WidgetsFlutterBinding.ensureInitialized();
-  runApp(MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-       
-        primarySwatch: Colors.blueGrey,
-      ),
-      home: const LoginView(),
-    ),
-    );
-}
 
 
-class RegisterView extends StatefulWidget {
-  const RegisterView({super.key});
+class LoginView extends StatefulWidget {
+  const LoginView({super.key});
 
   @override
-  State<RegisterView> createState() => _RegisterViewState();
+  State<LoginView> createState() => _LoginViewState();
 }
 
-class _RegisterViewState extends State<RegisterView> {
-  late final TextEditingController _email;
+class _LoginViewState extends State<LoginView> {
+    late final TextEditingController _email;
   late final TextEditingController _pwd;
 
   @override
@@ -51,7 +34,7 @@ class _RegisterViewState extends State<RegisterView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Register'), 
+        title: const Text('Login'), 
         ),
         body: FutureBuilder(
           future: Firebase.initializeApp(
@@ -85,29 +68,27 @@ class _RegisterViewState extends State<RegisterView> {
                 final email = _email.text;
                 final pwd = _pwd.text;
                 try{
-                 final userCredential = 
-                 await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                    final userCredential = await FirebaseAuth.instance.
+                 signInWithEmailAndPassword(
                   email: email, 
                   password: pwd
                   );
                   print(userCredential);
                 }
                 on FirebaseAuthException catch(e){
-                  switch(e.code){
-                    case 'weak-password' :
-                    print('Password not strong enough!');
-                    break;
-                    case 'email-already-in-use':
-                    print('Email already in use!');
-                    break;
-                    case 'invalid-email':
-                    print('Invalid Email!');
-                    break;
-                    default :
-                    break;
+                  if(e.code == 'user-not=found'){
+                    print('User not found!');
+                  }
+                  else if(e.code == 'wrong-password'){
+                    print('Wrong password!');
                   }
                 }
-              }, child: const Text('Register')),
+                catch (e){
+                  print('Something went wrong!');
+                  print(e.runtimeType);
+                  print(e);
+                }
+              }, child: const Text('Login')),
             ],
           );
           default:
@@ -118,9 +99,3 @@ class _RegisterViewState extends State<RegisterView> {
     );
   }
 }
-
-
-
-
-
-
