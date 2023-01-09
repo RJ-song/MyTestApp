@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mytestapp/firebase_options.dart';
-import 'package:mytestapp/views/login_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
 
@@ -77,13 +76,13 @@ class _RegisterViewState extends State<RegisterView> {
                 on FirebaseAuthException catch(e){
                   switch(e.code){
                     case 'weak-password' :
-                    print('Password not strong enough!');
+                    TextToast.show('Password not strong enough!');
                     break;
                     case 'email-already-in-use':
-                    print('Email already in use!');
+                    TextToast.show('Email already in use!');
                     break;
                     case 'invalid-email':
-                    print('Invalid Email!');
+                    TextToast.show('Invalid Email!');
                     break;
                     default :
                     break;
@@ -99,4 +98,20 @@ class _RegisterViewState extends State<RegisterView> {
         ),
     );
   }
+}
+
+
+class TextToast{
+  static show(String content, {int duration = 3} ) {
+    Fluttertoast.showToast(
+      msg: content,
+      timeInSecForIosWeb: duration,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      backgroundColor: Colors.blueGrey,
+      textColor: Colors.white,
+      fontSize: 14.0,
+    );
+  }
+
 }

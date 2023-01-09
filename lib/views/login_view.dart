@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mytestapp/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 
 
 class LoginView extends StatefulWidget {
@@ -76,14 +76,16 @@ class _LoginViewState extends State<LoginView> {
                   print(userCredential);
                 }
                 on FirebaseAuthException catch(e){
-                  if(e.code == 'user-not=found'){
-                    print('User not found!');
+                  if(e.code == 'user-not-found'){
+                    TextToast.show('User not found!');
                   }
                   else if(e.code == 'wrong-password'){
                     print('Wrong password!');
+                    TextToast.show('Password incorrect');
                   }
                 }
                 catch (e){
+                  TextToast.show('Something went wrong! try again later!');
                   print('Something went wrong!');
                   print(e.runtimeType);
                   print(e);
@@ -98,4 +100,20 @@ class _LoginViewState extends State<LoginView> {
         ),
     );
   }
+}
+
+
+class TextToast{
+  static show(String content, {int duration = 3} ) {
+    Fluttertoast.showToast(
+      msg: content,
+      timeInSecForIosWeb: duration,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      backgroundColor: Colors.blueGrey,
+      textColor: Colors.white,
+      fontSize: 14.0,
+    );
+  }
+
 }
