@@ -30,56 +30,63 @@ class _RegisterViewState extends State<RegisterView> {
 
   @override
   Widget build(BuildContext context) {
-     return Column(
-            children: [
-              TextField(
-                controller: _email,
-                enableSuggestions: false,
-                autocorrect: false,
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  hintText: 'Enter your Email'
+     return Scaffold(
+       appBar: AppBar(title: const Text('Registration'),),
+       body: Column(
+              children: [
+                TextField(
+                  controller: _email,
+                  enableSuggestions: false,
+                  autocorrect: false,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(
+                    hintText: 'Enter your Email'
+                  ),
                 ),
-              ),
-              TextField(
-                controller: _pwd,
-                obscureText: true,
-                enableSuggestions: false,
-                autocorrect: false,
-                decoration: const InputDecoration(
-                  hintText: 'Enter your password'
+                TextField(
+                  controller: _pwd,
+                  obscureText: true,
+                  enableSuggestions: false,
+                  autocorrect: false,
+                  decoration: const InputDecoration(
+                    hintText: 'Enter your password'
+                  ),
                 ),
-              ),
-              TextButton(onPressed:() async{
-              
-                final email = _email.text;
-                final pwd = _pwd.text;
-                try{
-                 final userCredential = 
-                 await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                  email: email, 
-                  password: pwd
-                  );
-                  print(userCredential);
-                }
-                on FirebaseAuthException catch(e){
-                  switch(e.code){
-                    case 'weak-password' :
-                    TextToast.show('Password not strong enough!');
-                    break;
-                    case 'email-already-in-use':
-                    TextToast.show('Email already in use!');
-                    break;
-                    case 'invalid-email':
-                    TextToast.show('Invalid Email!');
-                    break;
-                    default :
-                    break;
+                TextButton(onPressed:() async{
+                
+                  final email = _email.text;
+                  final pwd = _pwd.text;
+                  try{
+                   final userCredential = 
+                   await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                    email: email, 
+                    password: pwd
+                    );
+                    print(userCredential);
                   }
-                }
-              }, child: const Text('Register')),
-            ],
-          );
+                  on FirebaseAuthException catch(e){
+                    switch(e.code){
+                      case 'weak-password' :
+                      TextToast.show('Password not strong enough!');
+                      break;
+                      case 'email-already-in-use':
+                      TextToast.show('Email already in use!');
+                      break;
+                      case 'invalid-email':
+                      TextToast.show('Invalid Email!');
+                      break;
+                      default :
+                      break;
+                    }
+                  }
+                }, child: const Text('Register')),
+                TextButton(onPressed: () {
+                   Navigator.of(context).pushNamedAndRemoveUntil('/login/', 
+                (route) => false);
+                }, child: const Text('already registered? click here to login'))
+              ],
+            ),
+     );
   }
 }
 
