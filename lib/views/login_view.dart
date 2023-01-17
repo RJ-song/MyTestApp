@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:developer' as devtools show log;
 
 
 class LoginView extends StatefulWidget {
@@ -58,27 +59,28 @@ class _LoginViewState extends State<LoginView> {
                   final email = _email.text;
                   final pwd = _pwd.text;
                   try{
-                      final userCredential = await FirebaseAuth.instance.
+                     await FirebaseAuth.instance.
                    signInWithEmailAndPassword(
                     email: email, 
                     password: pwd
                     );
-                    print(userCredential);
+                    Navigator.of(context).
+                    pushNamedAndRemoveUntil('/notes/', (route) => false
+                    );
                   }
                   on FirebaseAuthException catch(e){
                     if(e.code == 'user-not-found'){
                       TextToast.show('User not found!');
                     }
                     else if(e.code == 'wrong-password'){
-                      print('Wrong password!');
                       TextToast.show('Password incorrect');
                     }
                   }
                   catch (e){
                     TextToast.show('Something went wrong! try again later!');
-                    print('Something went wrong!');
-                    print(e.runtimeType);
-                    print(e);
+                    devtools.log('Something went wrong!');
+                    devtools.log(e.runtimeType.toString());
+                    devtools.log(e.toString());
                   }
                 }, child: const Text('Login')),
                 

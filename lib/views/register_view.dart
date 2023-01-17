@@ -3,6 +3,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mytestapp/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:developer' as devtools show log;
+
+
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
 
@@ -62,7 +65,7 @@ class _RegisterViewState extends State<RegisterView> {
                     email: email, 
                     password: pwd
                     );
-                    print(userCredential);
+                    devtools.log(userCredential.toString());
                   }
                   on FirebaseAuthException catch(e){
                     switch(e.code){
