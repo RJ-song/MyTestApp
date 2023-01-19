@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mytestapp/constants/routes.dart';
+import 'package:mytestapp/dialog/show_error_dialog.dart';
 import 'package:mytestapp/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:developer' as devtools show log;
+
+import '../Toast/toast.dart';
 
 
 class RegisterView extends StatefulWidget {
@@ -82,29 +86,16 @@ class _RegisterViewState extends State<RegisterView> {
                       break;
                     }
                   }
+                  catch(e){
+                    await showErrorDialog(context, 'Something went wrong! please try again later');
+                  }
                 }, child: const Text('Register')),
                 TextButton(onPressed: () {
-                   Navigator.of(context).pushNamedAndRemoveUntil('/login/', 
+                   Navigator.of(context).pushNamedAndRemoveUntil(loginRoute, 
                 (route) => false);
                 }, child: const Text('already registered? click here to login'))
               ],
             ),
      );
   }
-}
-
-
-class TextToast{
-  static show(String content, {int duration = 3} ) {
-    Fluttertoast.showToast(
-      msg: content,
-      timeInSecForIosWeb: duration,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
-      backgroundColor: Colors.blueGrey,
-      textColor: Colors.white,
-      fontSize: 14.0,
-    );
-  }
-
 }

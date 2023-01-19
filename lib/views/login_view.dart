@@ -4,6 +4,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:developer' as devtools show log;
 
+import 'package:mytestapp/constants/routes.dart';
+import 'package:mytestapp/dialog/show_error_dialog.dart';
+
+import '../Toast/toast.dart';
+
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -65,7 +70,7 @@ class _LoginViewState extends State<LoginView> {
                     password: pwd
                     );
                     Navigator.of(context).
-                    pushNamedAndRemoveUntil('/notes/', (route) => false
+                    pushNamedAndRemoveUntil(notesRoute, (route) => false
                     );
                   }
                   on FirebaseAuthException catch(e){
@@ -77,7 +82,7 @@ class _LoginViewState extends State<LoginView> {
                     }
                   }
                   catch (e){
-                    TextToast.show('Something went wrong! try again later!');
+                    await showErrorDialog(context, 'Somgthing went wrong! try again later');
                     devtools.log('Something went wrong!');
                     devtools.log(e.runtimeType.toString());
                     devtools.log(e.toString());
@@ -85,7 +90,7 @@ class _LoginViewState extends State<LoginView> {
                 }, child: const Text('Login')),
                 
                 TextButton(onPressed: () {
-                  Navigator.of(context).pushNamedAndRemoveUntil('/register/', 
+                  Navigator.of(context).pushNamedAndRemoveUntil(registerRoute, 
                   (route) => false);
                 },
                  child: const Text('Not registered yet? click here to register')
@@ -97,17 +102,4 @@ class _LoginViewState extends State<LoginView> {
 }
 
 
-class TextToast{
-  static show(String content, {int duration = 3} ) {
-    Fluttertoast.showToast(
-      msg: content,
-      timeInSecForIosWeb: duration,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
-      backgroundColor: Colors.blueGrey,
-      textColor: Colors.white,
-      fontSize: 14.0,
-    );
-  }
 
-}
