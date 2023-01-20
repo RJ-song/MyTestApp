@@ -63,13 +63,14 @@ class _RegisterViewState extends State<RegisterView> {
                 
                   final email = _email.text;
                   final pwd = _pwd.text;
-                  try{
-                   final userCredential = 
+                  try{                   
                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
                     email: email, 
                     password: pwd
-                    );
-                    devtools.log(userCredential.toString());
+                    );    
+                    final user = FirebaseAuth.instance.currentUser;
+                    await user?.sendEmailVerification();
+                    Navigator.of(context).pushNamed(verifyEmailRoute);
                   }
                   on FirebaseAuthException catch(e){
                     switch(e.code){
@@ -86,8 +87,8 @@ class _RegisterViewState extends State<RegisterView> {
                       break;
                     }
                   }
-                  catch(e){
-                    await showErrorDialog(context, 'Something went wrong! please try again later');
+                  catch(e){           
+                    await showErrorDialog(context, 'Something went wrong! please try again later.');
                   }
                 }, child: const Text('Register')),
                 TextButton(onPressed: () {
