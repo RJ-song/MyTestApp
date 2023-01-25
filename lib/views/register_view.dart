@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mytestapp/constants/routes.dart';
 import 'package:mytestapp/dialog/show_error_dialog.dart';
-import 'package:mytestapp/firebase_options.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'dart:developer' as devtools show log;
+import 'package:mytestapp/services/auth/auth_exceptions.dart';
+import 'package:mytestapp/services/auth/auth_servise.dart';
 
 import '../Toast/toast.dart';
 
@@ -63,31 +60,21 @@ class _RegisterViewState extends State<RegisterView> {
                 
                   final email = _email.text;
                   final pwd = _pwd.text;
-                  try{                   
-                   await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                    email: email, 
-                    password: pwd
-                    );    
-                    final user = FirebaseAuth.instance.currentUser;
-                    await user?.sendEmailVerification();
+                  try{  
+                    await AuthService.firebase().createUser(email: email, password: pwd) ; 
+                    AuthService.firebase().sendEmailVerification();
                     Navigator.of(context).pushNamed(verifyEmailRoute);
                   }
-                  on FirebaseAuthException catch(e){
-                    switch(e.code){
-                      case 'weak-password' :
-                      TextToast.show('Password not strong enough!');
-                      break;
-                      case 'email-already-in-use':
-                      TextToast.show('Email already in use!');
-                      break;
-                      case 'invalid-email':
-                      TextToast.show('Invalid Email!');
-                      break;
-                      default :
-                      break;
-                    }
+                  on WeakPasswordAuthException{
+                    TextToast.show('Password not strong enough!');
                   }
-                  catch(e){           
+                  on EmailAlreadyInUseAuthException{
+                    TextToast.show('Email already in use!');
+                  }
+                  on InvalidEmailAuthException{
+                    TextToast.show('Invalid Email!');
+                  }
+                  on GenericAuthException{
                     await showErrorDialog(context, 'Something went wrong! please try again later.');
                   }
                 }, child: const Text('Register')),

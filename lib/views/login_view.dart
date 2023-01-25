@@ -1,11 +1,9 @@
 
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'dart:developer' as devtools show log;
-
 import 'package:mytestapp/constants/routes.dart';
 import 'package:mytestapp/dialog/show_error_dialog.dart';
-
+import 'package:mytestapp/services/auth/auth_exceptions.dart';
+import 'package:mytestapp/services/auth/auth_servise.dart';
 import '../Toast/toast.dart';
 
 
@@ -63,13 +61,12 @@ class _LoginViewState extends State<LoginView> {
                   final email = _email.text;
                   final pwd = _pwd.text;
                   try{
-                     await FirebaseAuth.instance.
-                   signInWithEmailAndPassword(
-                    email: email, 
-                    password: pwd
-                    );
-                    final user = FirebaseAuth.instance.currentUser;
-                    if(user?.emailVerified??false){
+                    AuthService.firebase().logIn(
+                      email: email, 
+                      password: pwd,
+                      );
+                    final user = AuthService.firebase().currentUser;
+                    if(user?.isEmailVerified??false){
                       Navigator.of(context).
                       pushNamedAndRemoveUntil(notesRoute, (route) => false
                     );
@@ -81,19 +78,14 @@ class _LoginViewState extends State<LoginView> {
                     }
                     
                   }
-                  on FirebaseAuthException catch(e){
-                    if(e.code == 'user-not-found'){
+                  on UserNotFoundAuthException{
                       TextToast.show('User not found!');
-                    }
-                    else if(e.code == 'wrong-password'){
-                      TextToast.show('Password incorrect');
-                    }
                   }
-                  catch (e){
-                    await showErrorDialog(context, 'Somgthing went wrong! try again later');
-                    devtools.log('Something went wrong!');
-                    devtools.log(e.runtimeType.toString());
-                    devtools.log(e.toString());
+                  on WrongPasswordAuthException{
+                      TextToast.show('Password incorrect');
+                  }
+                  on GenericAuthException{
+                    await showErrorDialog(context, 'something went wrong');
                   }
                 }, child: const Text('Login')),
                 
